@@ -42,7 +42,7 @@ function startTimer()
             x.style.border="5px solid green";
         }
         clearInterval(refreshTimer);   
-    },2000);
+    },500);
 }
 
 //handle keypresses
