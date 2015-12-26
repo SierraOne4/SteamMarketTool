@@ -42,7 +42,7 @@ function startTimer()
             x.style.border="5px solid green";
         }
         clearInterval(refreshTimer);   
-    },500);
+    },750);
 }
 
 //handle keypresses
@@ -62,7 +62,7 @@ function KeyCheck(e)
                     clearInterval(interval);
                     processResults();
                 }    
-            }, 1000);
+            }, 1500);
 
             function processResults()
             {
