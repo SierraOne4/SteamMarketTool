@@ -62,7 +62,7 @@ function KeyCheck(e)
                     clearInterval(interval);
                     processResults();
                 }    
-            }, 800);
+            }, 1000);
 
             function processResults()
             {
@@ -191,7 +191,7 @@ function setStorage(url, value)
 {
     localStorage.setItem(url,value);
     var date = new Date();
-    var schedule=Math.round((date.setSeconds(date.getSeconds()+120))/1000);
+    var schedule=Math.round((date.setSeconds(date.getSeconds()+300))/1000);
     localStorage.setItem(url+"_time",schedule);
 }
 
