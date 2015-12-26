@@ -17,3 +17,11 @@ Included are the following features:
 
 3. Hotkeys for accepting TOS, and refreshing the list
 
+##Installation Instructions
+
+Install Tampermonkey (https://tampermonkey.net/).
+
+Copy and paste the contents of the .js file into a new Tampermonkey script.
+
+
+
