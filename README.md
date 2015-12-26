@@ -23,5 +23,10 @@ Install Tampermonkey (https://tampermonkey.net/).
 
 Copy and paste the contents of the .js file into a new Tampermonkey script.
 
+## Usage Instructions and Controls
 
+Navigate to the Steam Community Market in your browser (http://steamcommunity.com/market/)
+
+* Press R to filter list
+* Press E in buy menu to auto-accept ToS
 
