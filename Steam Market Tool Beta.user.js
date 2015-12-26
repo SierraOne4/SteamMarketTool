@@ -64,7 +64,6 @@ function KeyCheck(e)
                 }    
             }, 800);
 
-            //apply various filters and overlays, and disable refreshing
             function processResults()
             {
                 var y=document.querySelectorAll('div.market_recent_listing_row');
@@ -160,11 +159,16 @@ function openLink(url,minPrice,gameName)
                 priceList.push(parseFloat(storagePriceArray.pop()));   
             }
         }
+        else
+        {
+         extractPrices();   
+        }
     }
     else
     {
         extractPrices(); 
     }
+    
     //update new namespace
     var results=compareResults(minPrice,priceList);
     newGameNameSpace.innerHTML=results[0];
@@ -173,7 +177,6 @@ function openLink(url,minPrice,gameName)
     //
 }
 
-//retrieve target URL's HTML data
 function httpGet(theUrl)
 {
     var xmlHttp = null;
@@ -184,7 +187,6 @@ function httpGet(theUrl)
     return xmlHttp.responseText;
 }
 
-//create key and priceList in local Storage
 function setStorage(url, value)
 {
     localStorage.setItem(url,value);
@@ -193,7 +195,6 @@ function setStorage(url, value)
     localStorage.setItem(url+"_time",schedule);
 }
 
-//check datestamp to ensure fresh data
 function checkStorageExpire(url)
 {
     var date = new Date();
@@ -213,7 +214,6 @@ function checkStorageExpire(url)
     }
 }
 
-//a general all-purpose filter function
 function filter(listingArray,filterFunction,deleteListing)
 {
     var resultArray=[];
@@ -234,8 +234,6 @@ function filter(listingArray,filterFunction,deleteListing)
     }
     return resultArray;
 }
-
-//remove non-CSGO inputs
 function filterCSGO(listing)
 {
     return findGameName(listing).innerHTML=="Counter-Strike: Global Offensive";
@@ -287,7 +285,7 @@ function overlayPriceInfo(listingArray)
         extraPriceSlot.style.marginTop="8%";
     }
 }
-//displays metrics based on prices from openLink
+//displays metrics based on prices
 function viabilityOverlay(listingArray)
 {
     var listing;
@@ -318,25 +316,23 @@ function findGameName(listing)
 function compareResults(minPrice, priceList)
 {
     var percentage=0;
+    var ranking=0;
     if (minPrice<=priceList[0])
     {
-        percentage=0;
         percentage=" +"+(((priceList[0]-minPrice)/minPrice)*100).toFixed(1)+"%";
         return  ["VIABLE BUY"+percentage,"green"];
 
     }
     else if (minPrice>=priceList[priceList.length-1])
     {
-        percentage=0;
         percentage=" +"+(((minPrice-priceList[0])/priceList[0])*100).toFixed(1)+"%";
         return  ["NOT VIABLE"+percentage,"red"];
     }
     else 
     {
-        var ranking=0;
         for (var k=0;k<priceList.length;k++)
         {
-            if (priceList[k]>=minPrice)
+            if (priceList[k]>minPrice)
             {   
                 ranking=k+1;
                 break;
@@ -346,7 +342,6 @@ function compareResults(minPrice, priceList)
     }
 }
 
-//remove copies of listings from previous buy windows
 function removeCopies(listing)
 {
     var listingID=listing.id;
