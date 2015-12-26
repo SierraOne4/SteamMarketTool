@@ -64,6 +64,7 @@ function KeyCheck(e)
                 }    
             }, 800);
 
+            //apply various filters and overlays, and disable refreshing
             function processResults()
             {
                 var y=document.querySelectorAll('div.market_recent_listing_row');
@@ -172,6 +173,7 @@ function openLink(url,minPrice,gameName)
     //
 }
 
+//retrieve target URL's HTML data
 function httpGet(theUrl)
 {
     var xmlHttp = null;
@@ -182,6 +184,7 @@ function httpGet(theUrl)
     return xmlHttp.responseText;
 }
 
+//create key and priceList in local Storage
 function setStorage(url, value)
 {
     localStorage.setItem(url,value);
@@ -190,6 +193,7 @@ function setStorage(url, value)
     localStorage.setItem(url+"_time",schedule);
 }
 
+//check datestamp to ensure fresh data
 function checkStorageExpire(url)
 {
     var date = new Date();
@@ -209,6 +213,7 @@ function checkStorageExpire(url)
     }
 }
 
+//a general all-purpose filter function
 function filter(listingArray,filterFunction,deleteListing)
 {
     var resultArray=[];
@@ -229,6 +234,8 @@ function filter(listingArray,filterFunction,deleteListing)
     }
     return resultArray;
 }
+
+//remove non-CSGO inputs
 function filterCSGO(listing)
 {
     return findGameName(listing).innerHTML=="Counter-Strike: Global Offensive";
@@ -280,7 +287,7 @@ function overlayPriceInfo(listingArray)
         extraPriceSlot.style.marginTop="8%";
     }
 }
-//displays metrics based on prices
+//displays metrics based on prices from openLink
 function viabilityOverlay(listingArray)
 {
     var listing;
@@ -339,6 +346,7 @@ function compareResults(minPrice, priceList)
     }
 }
 
+//remove copies of listings from previous buy windows
 function removeCopies(listing)
 {
     var listingID=listing.id;
