@@ -30,3 +30,10 @@ Navigate to the Steam Community Market in your browser (http://steamcommunity.co
 * Press R to filter list
 * Press E in buy menu to auto-accept ToS
 
+##Known Bugs
+
+1. ~~There is a bug where after a yellow result (moderate price) appears, a refresh may return the same result but as a green result.~~
+  ~~There is still no indication as to how this is occurring, and it is rare enough that i has not yet affected my own buys.~~
+  ~~Will look into it soon.~~
+
+2. There is a bug where the page does not load quickly anough and results are not filtered. This occurs 7% of the time.
