@@ -42,7 +42,7 @@ function startTimer()
             x.style.border="5px solid green";
         }
         clearInterval(refreshTimer);   
-    },1000);
+    },1700);
 }
 
 //handle keypresses
@@ -60,10 +60,11 @@ function KeyCheck(e)
             var interval = setInterval(function() {
                 if(document.readyState === 'complete') {
                     clearInterval(interval);
-                    processResults();
                     clearOutdatedLogs();
+                    processResults();
+                    
                 }    
-            }, 1500);
+            }, 500);
 
             function processResults()
             {
@@ -311,9 +312,6 @@ function compareResults(minPrice, priceList)
 {
     var percentage=0;
     var ranking=0;
-    console.log("minPrice: "+minPrice);
-    console.log("lowPrice: "+priceList[0]);
-    console.log("priceListLength: "+priceList.length);
      if (minPrice<=priceList[0])
     {
         percentage=" +"+(((priceList[0]-minPrice)/minPrice)*100).toFixed(1)+"%";
@@ -357,7 +355,6 @@ function clearOutdatedLogs()
              {
              localStorage.removeItem(keys);
                  localStorage.removeItem(keys.replace("_time",""));
-                 console.log("Cleared: "+keys.replace("_time",""));
              }
      }
  }
