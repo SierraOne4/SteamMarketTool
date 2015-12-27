@@ -42,7 +42,7 @@ function startTimer()
             x.style.border="5px solid green";
         }
         clearInterval(refreshTimer);   
-    },1700);
+    },2000);
 }
 
 //handle keypresses
@@ -139,7 +139,7 @@ function openLink(url,minPrice,gameName)
             if (priceString!="Sold!")
             {
 
-                currentPrice=parseFloat(priceString.replace(/[^.,]+\D+\s/g,"").replace(",",".")).toFixed(2);  
+                currentPrice=parseFloat(priceString.replace(/[^\d+,.]+[$.]/g,"").replace(",",".")).toFixed(2);  
 
                 priceList.push(currentPrice);   
 
@@ -244,11 +244,11 @@ function filterByRecent(listing)
 function filterByPrice(listing)
 {
     var priceLimit=document.getElementById("marketWalletBalanceAmount").innerHTML;
-    priceLimit=priceLimit.replace(/[^.,]+\D+\s/g,"").replace(",",".");
+    priceLimit=priceLimit.replace(/[^\d+,.]+[$.]/g,"").replace(",",".");
     priceLimit=parseFloat(priceLimit);
 
     var itemPrice=listing.querySelector("span.market_listing_price_with_fee").innerHTML;
-    var price=itemPrice.trim().replace(/[^.,]+\D+\s/g,"").replace(",",".");
+    var price=itemPrice.trim().replace(/[^\d+,.]+[$.]/g,"").replace(",",".");
     return (price!="Sold!" && parseFloat(price)<=priceLimit);
 }
 
@@ -273,7 +273,7 @@ function overlayPriceInfo(listingArray)
         var itemPrice=listing.querySelector("span.market_listing_price_with_fee");
         var extraPriceSlot=listing.querySelector("span.market_listing_price_with_publisher_fee_only");
         extraPriceSlot.style.display="block";
-        var price=itemPrice.innerHTML.trim().replace(/[^.,]+\D+\s/g,"").replace(",",".");
+        var price=itemPrice.innerHTML.trim().replace(/[^\d+,.]+[$.]/g,"").replace(",",".");
         extraPriceSlot.innerHTML="$"+minimumPrice; 
         itemPrice.style.fontSize="100%";
         extraPriceSlot.style.fontSize="130%";
@@ -297,7 +297,7 @@ function viabilityOverlay(listingArray)
 function findMinPrice(listing)
 {
     var itemPrice=listing.querySelector("span.market_listing_price_with_fee");
-    var price=itemPrice.innerHTML.trim().replace(/[^.,]+\D+\s/g,"").replace(",",".");
+    var price=itemPrice.innerHTML.trim().replace(/[^\d+,.]+[$.]/g,"").replace(",",".");
     return (price*1.15+0.05).toFixed(2);
 
 }
@@ -312,7 +312,7 @@ function compareResults(minPrice, priceList)
 {
     var percentage=0;
     var ranking=0;
-     if (minPrice<=priceList[0])
+     if (minPrice<=priceList[0] && (priceList[0]-minPrice)/100>=0)
     {
         percentage=" +"+(((priceList[0]-minPrice)/minPrice)*100).toFixed(1)+"%";
         return  ["VIABLE BUY"+percentage,"green"];
