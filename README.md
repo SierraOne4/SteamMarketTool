@@ -37,3 +37,6 @@ Navigate to the Steam Community Market in your browser (http://steamcommunity.co
   ~~Will look into it soon.~~
 
 2. There is a bug where the page does not load quickly anough and results are not filtered. This occurs 4-7% of the time.
+
+3. There is a bug where the server will not let you buy the item (xmlHttpRequest Error). From what I can tell, it's a Steam issue.
+4. There is a bug where there is an xmlHttpRequest Error when requesting info for price comparison. From what I can tell, it seems to be an anomaly, occurring in less than 1% of tests.
