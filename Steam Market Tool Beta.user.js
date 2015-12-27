@@ -61,6 +61,7 @@ function KeyCheck(e)
                 if(document.readyState === 'complete') {
                     clearInterval(interval);
                     processResults();
+                    clearOutdatedLogs();
                 }    
             }, 1500);
 
@@ -143,7 +144,7 @@ function openLink(url,minPrice,gameName)
 
             }
         }
-        var storageValueString=priceList.join("/");
+        var storageValueString=priceList.join(",");
         setStorage(url,storageValueString);
     }
 
@@ -151,18 +152,11 @@ function openLink(url,minPrice,gameName)
     //check if key exists
     if (localStorage.getItem(url))
     {
-        if (!checkStorageExpire(url))
-        {
-            var storagePriceArray=localStorage.getItem(url).split("/");
+            var storagePriceArray=localStorage.getItem(url).split(",");
             for (var m=0;m<storagePriceArray.length;m++)
             {
-                priceList.push(parseFloat(storagePriceArray.pop()));   
-            }
-        }
-        else
-        {
-         extractPrices();   
-        }
+                priceList.push(parseFloat(storagePriceArray[m]));   
+            } 
     }
     else
     {
@@ -191,7 +185,7 @@ function setStorage(url, value)
 {
     localStorage.setItem(url,value);
     var date = new Date();
-    var schedule=Math.round((date.setSeconds(date.getSeconds()+300))/1000);
+    var schedule=Math.round((date.setSeconds(date.getSeconds()+60))/1000);
     localStorage.setItem(url+"_time",schedule);
 }
 
@@ -317,7 +311,10 @@ function compareResults(minPrice, priceList)
 {
     var percentage=0;
     var ranking=0;
-    if (minPrice<=priceList[0])
+    console.log("minPrice: "+minPrice);
+    console.log("lowPrice: "+priceList[0]);
+    console.log("priceListLength: "+priceList.length);
+     if (minPrice<=priceList[0])
     {
         percentage=" +"+(((priceList[0]-minPrice)/minPrice)*100).toFixed(1)+"%";
         return  ["VIABLE BUY"+percentage,"green"];
@@ -346,4 +343,22 @@ function removeCopies(listing)
 {
     var listingID=listing.id;
     return (listingID.indexOf("Copy")<0);   
+}
+
+function clearOutdatedLogs()
+{
+ for (var j=0;j<localStorage.length;j++)
+ {
+  var entry=localStorage.getItem(localStorage.key(j));
+     var keys=localStorage.key(j);
+     if (keys.indexOf("_time")>0)
+     {
+         if (checkStorageExpire(keys.replace("_time","")))
+             {
+             localStorage.removeItem(keys);
+                 localStorage.removeItem(keys.replace("_time",""));
+                 console.log("Cleared: "+keys.replace("_time",""));
+             }
+     }
+ }
 }
