@@ -42,7 +42,7 @@ function startTimer()
             x.style.border="5px solid green";
         }
         clearInterval(refreshTimer);   
-    },2000);
+    },1500);
 }
 
 //handle keypresses
@@ -64,7 +64,7 @@ function KeyCheck(e)
                     processResults();
                     
                 }    
-            }, 500);
+            }, 1000);
 
             function processResults()
             {
@@ -256,7 +256,7 @@ function filterByPrice(listing)
 function filterByName(listing)
 {
     var name=listing.querySelector("a.market_listing_item_name_link").innerHTML;
-    var filteredWords=["Sticker"," Case","Gift Package"," Capsule"," Key", " Pass", "Name Tag","Music Kit","ESL ","DreamHack "];
+    var filteredWords=["Sticker"," Case","Gift Package"," Capsule"," Key", " Pass", "Name Tag","Music Kit","ESL ","DreamHack ","Swap Tool"];
     if (new RegExp(filteredWords.join("|")).test(name)) {
         return 0;
     }
