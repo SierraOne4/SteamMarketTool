@@ -137,7 +137,7 @@ function openLink(url,minPrice,gameName)
             if (priceString!="Sold!")
             {
 
-                currentPrice=parseFloat(priceString.replace(/[^.,]+\D+\s/g,"").replace(",",".").toFixed(2);  
+                currentPrice=parseFloat(priceString.replace(/[^.,]+\D+\s/g,"").replace(",",".")).toFixed(2);  
 
                 priceList.push(currentPrice);   
 
