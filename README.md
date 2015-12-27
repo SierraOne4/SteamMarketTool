@@ -36,4 +36,4 @@ Navigate to the Steam Community Market in your browser (http://steamcommunity.co
   ~~There is still no indication as to how this is occurring, and it is rare enough that i has not yet affected my own buys.~~
   ~~Will look into it soon.~~
 
-2. There is a bug where the page does not load quickly anough and results are not filtered. This occurs 7% of the time.
+2. There is a bug where the page does not load quickly anough and results are not filtered. This occurs 4-7% of the time.
