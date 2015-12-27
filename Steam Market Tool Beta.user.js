@@ -137,7 +137,7 @@ function openLink(url,minPrice,gameName)
             if (priceString!="Sold!")
             {
 
-                currentPrice=parseFloat(priceString.replace(/[^.,]+\D+\s/g,"")).toFixed(2);  
+                currentPrice=parseFloat(priceString.replace(/[^.,]+\D+\s/g,"").replace(",",".").toFixed(2);  
 
                 priceList.push(currentPrice);   
 
@@ -249,11 +249,11 @@ function filterByRecent(listing)
 function filterByPrice(listing)
 {
     var priceLimit=document.getElementById("marketWalletBalanceAmount").innerHTML;
-    priceLimit=priceLimit.replace(/[^.,]+\D+\s/g,"");
+    priceLimit=priceLimit.replace(/[^.,]+\D+\s/g,"").replace(",",".");
     priceLimit=parseFloat(priceLimit);
 
     var itemPrice=listing.querySelector("span.market_listing_price_with_fee").innerHTML;
-    var price=itemPrice.trim().replace(/[^.,]+\D+\s/g,"");
+    var price=itemPrice.trim().replace(/[^.,]+\D+\s/g,"").replace(",",".");
     return (price!="Sold!" && parseFloat(price)<=priceLimit);
 }
 
@@ -278,7 +278,7 @@ function overlayPriceInfo(listingArray)
         var itemPrice=listing.querySelector("span.market_listing_price_with_fee");
         var extraPriceSlot=listing.querySelector("span.market_listing_price_with_publisher_fee_only");
         extraPriceSlot.style.display="block";
-        var price=itemPrice.innerHTML.trim().replace(/[^.,]+\D+\s/g,"");
+        var price=itemPrice.innerHTML.trim().replace(/[^.,]+\D+\s/g,"").replace(",",".");
         extraPriceSlot.innerHTML="$"+minimumPrice; 
         itemPrice.style.fontSize="100%";
         extraPriceSlot.style.fontSize="130%";
@@ -302,7 +302,7 @@ function viabilityOverlay(listingArray)
 function findMinPrice(listing)
 {
     var itemPrice=listing.querySelector("span.market_listing_price_with_fee");
-    var price=itemPrice.innerHTML.trim().replace(/[^.,]+\D+\s/g,"");
+    var price=itemPrice.innerHTML.trim().replace(/[^.,]+\D+\s/g,"").replace(",",".");
     return (price*1.15+0.05).toFixed(2);
 
 }
