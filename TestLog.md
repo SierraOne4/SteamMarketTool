@@ -21,8 +21,12 @@ Test 3. Listings Purchased: 0 (+$0.00)
 
 Test 4. Listings Purchased: 2 (+$0.26)
 -100 Queries
--5 Viable Listing
+-5 Viable Listings
 -1 Instance of tab loading slowly 
 
-
+Test 5. Listings Purchased 0 (+$0.00)
+-100 Queries
+-2 Viable Listings
+-1 Instance of slow loading
+-1 Instance of non-filtration
 
