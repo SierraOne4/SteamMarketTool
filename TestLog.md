@@ -34,5 +34,8 @@ Test 6. Listings Purchased: 0 (+$0.00)
 - 100 Queries
 - 3 Viable Listings
 
+Test 7. Listings Purchased: 0 (+$0.00)
+- 100 Queries
+- 6 Viable Listings
 
 
