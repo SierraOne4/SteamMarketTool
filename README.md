@@ -40,3 +40,4 @@ Navigate to the Steam Community Market in your browser (http://steamcommunity.co
 
 3. There is a bug where the server will not let you buy the item (xmlHttpRequest Error). From what I can tell, it's a Steam issue.
 4. There is a bug where there is an xmlHttpRequest Error when requesting info for price comparison. From what I can tell, it seems to be an anomaly, occurring in less than 1% of tests.
+5. There is a bug where a non-viable listing (or yellow?) is listed as price Rank #1.
