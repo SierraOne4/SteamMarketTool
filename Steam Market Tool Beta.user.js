@@ -9,6 +9,11 @@
 // ==/UserScript==
 /* jshint -W097 */
 
+
+//global variables
+var pollingTime=700;
+var delayTime=1800;
+var priceFloor=0.10;
 //Track requests since start of session
 var queries=0;
 function updateTitle()
@@ -42,7 +47,7 @@ function startTimer()
             x.style.border="5px solid green";
         }
         clearInterval(refreshTimer);   
-    },1500);
+    },delayTime);
 }
 
 //handle keypresses
@@ -64,7 +69,7 @@ function KeyCheck(e)
                     processResults();
                     
                 }    
-            }, 1000);
+            }, pollingTime);
 
             function processResults()
             {
@@ -249,7 +254,7 @@ function filterByPrice(listing)
 
     var itemPrice=listing.querySelector("span.market_listing_price_with_fee").innerHTML;
     var price=itemPrice.trim().replace(/[^\d+,.]+[$.]/g,"").replace(",",".");
-    return (price!="Sold!" && parseFloat(price)<=priceLimit);
+    return (price!="Sold!" && parseFloat(price)<=priceLimit && parseFloat(price)>=priceFloor);
 }
 
 //remove blacklisted words
@@ -332,6 +337,10 @@ function compareResults(minPrice, priceList)
                 ranking=k+1;
                 break;
             }
+        }
+        if (ranking==1){
+            percentage=" +"+(((minPrice-priceList[0])/priceList[0])*100).toFixed(1)+"%";
+            return ["NOT VIABLE"+percentage,"red"];
         }
         return  ["Price Rank # "+ranking,"yellow"];
     }
