@@ -8,12 +8,12 @@
 // @grant
 // ==/UserScript==
 /* jshint -W097 */
-
-
+var autoRefresh=1;
 //global variables
 var pollingTime=700;
-var delayTime=1800;
-var priceFloor=0.10;
+var delayTime=2500;
+var priceFloor=0.25;
+var minProfit=0.05;
 //Track requests since start of session
 var queries=0;
 function updateTitle()
@@ -21,93 +21,89 @@ function updateTitle()
     queries++;
     document.title="Requests: "+queries;
 }
-
 //get main container
 var x=document.getElementById("sellListingRows");
-
 //create space for request text (price comparisons
 var htmlRequest=document.createElement("div");
 htmlRequest.style.display="none";
 htmlRequest.id="httpRequest";
 document.querySelector("div.pagecontent").appendChild(htmlRequest);
-
 //detect keypresses
 window.addEventListener('keydown', KeyCheck, true);
-
 //timer to limit requests/hour
 var allowRefresh=true;
 var refreshTimer;
-function startTimer()
-{
-    refreshTimer=setInterval(function()
-                             {
-        if (!allowRefresh)
-        {
-            allowRefresh=true;
-            x.style.border="5px solid green";
-        }
-        clearInterval(refreshTimer);   
-    },delayTime);
-}
-
 //handle keypresses
 function KeyCheck(e)
 {
+    function mainFunction()
+    {
+        autoRefresh=1;
+        x.style.border="5px solid red";
+        switchTabs();
+        updateTitle();
+
+        //main function
+        var interval = setInterval(function() {
+            if(document.readyState === 'complete') {
+                clearInterval(interval);
+                clearOutdatedLogs();
+                processResults();
+            }
+
+        }, pollingTime);
+    }
+    function processResults()
+    {
+        var y=document.querySelectorAll('div.market_recent_listing_row');
+        y=filter(y,filterByRecent,false);  //remove non-recent listings 
+        y=filter(y,filterByGame,true);      //remove non-CSGO listing
+        y=filter(y,removeCopies,false);   //remove old opened buy windows
+        y=filter(y,filterByName,true);    //remove listings with blacklisted words
+        y=filter(y,filterByPrice,true);   //remove sold and non-budget listings
+        overlayPriceInfo(y);         //display minprice
+        viabilityOverlay(y);         //compare market listings
+        allowRefresh=false;
+        startTimer();
+    }
+    function startTimer()
+    {
+        refreshTimer=setInterval(function()
+         {
+            if (!allowRefresh)
+            {
+                allowRefresh=true;
+                x.style.border="5px solid green";
+                if (autoRefresh)
+                {
+                    mainFunction();  
+                }
+            }
+            clearInterval(refreshTimer);   
+        },delayTime);
+    }
     if (e.keyCode==82)
     {
         if (allowRefresh)
         {
-            x.style.border="5px solid red";
-            switchTabs();
-            updateTitle();
-
-            //main function
-            var interval = setInterval(function() {
-                if(document.readyState === 'complete') {
-                    clearInterval(interval);
-                    clearOutdatedLogs();
-                    processResults();
-                    
-                }    
-            }, pollingTime);
-
-            function processResults()
-            {
-                var y=document.querySelectorAll('div.market_recent_listing_row');
-
-                y=filter(y,filterByRecent,false);  //remove non-recent listings 
-                y=filter(y,filterCSGO,true);      //remove non-CSGO listing
-                y=filter(y,removeCopies,false);   //remove old opened buy windows
-                y=filter(y,filterByName,true);    //remove listings with blacklisted words
-                y=filter(y,filterByPrice,true);   //remove sold and non-budget listings
-
-                overlayPriceInfo(y);         //display minprice
-                viabilityOverlay(y);         //compare market listings
-                allowRefresh=false;
-                startTimer();
-            }
+            mainFunction();
         }
     }
     //detect e keypress
     else if (e.keyCode==69)
     {
-        var checkboxSSA=document.getElementsByName("accept_ssa")[0];
-        checkboxSSA.checked=true;
+        buyTransaction();
     }
 }
-
-
 //switch or refresh recent tab
 function switchTabs()
 {
     var tab=document.getElementById("tabRecentSellListings");
     eventFire(tab,'click');
-    var gameButton=document.querySelectorAll("a.game_button")[4];
+    var gameButton=document.querySelectorAll("a.game_button")[6];
     gameButton.focus();
     gameButton.blur();
 }
-
-
 //event creator for keypress
 function eventFire(el, etype){
     if (el.fireEvent) {
@@ -118,7 +114,6 @@ function eventFire(el, etype){
         el.dispatchEvent(evObj);
     }
 }
-
 //find comparisons on market
 function openLink(url,minPrice,gameName)
 {
@@ -131,50 +126,43 @@ function openLink(url,minPrice,gameName)
     var priceList=[];
     var currentPrice=0;
     var priceString="";
-
     //find prices for item
     function extractPrices()
     {
         htmlRequest.innerHTML=httpGet(url);
-
         var listings=htmlRequest.querySelectorAll("div.market_listing_row");
-        for (var j=0;j<listings.length;j++)
+        for (var j=1;j<listings.length;j++)
         {
             priceString=listings[j].querySelector("span.market_listing_price_with_fee").innerHTML.trim();   
             if (priceString!="Sold!")
             {
-
                 currentPrice=parseFloat(priceString.replace(/[^\d+,.]+[$.]/g,"").replace(",",".")).toFixed(2);  
-
                 priceList.push(currentPrice);   
-
             }
         }
         var storageValueString=priceList.join(",");
         setStorage(url,storageValueString);
     }
-
-
     //check if key exists
     if (localStorage.getItem(url))
     {
-            var storagePriceArray=localStorage.getItem(url).split(",");
-            for (var m=0;m<storagePriceArray.length;m++)
-            {
-                priceList.push(parseFloat(storagePriceArray[m]));   
-            } 
+        var storagePriceArray=localStorage.getItem(url).split(",");
+        for (var m=0;m<storagePriceArray.length;m++)
+        {
+            priceList.push(parseFloat(storagePriceArray[m]));   
+        } 
     }
     else
     {
         extractPrices(); 
     }
-    
+
     //update new namespace
     var results=compareResults(minPrice,priceList);
     newGameNameSpace.innerHTML=results[0];
     newGameNameSpace.style.color=results[1];
     htmlRequest.innerHTML="";
-    //
+
 }
 
 function httpGet(theUrl)
@@ -234,9 +222,9 @@ function filter(listingArray,filterFunction,deleteListing)
     }
     return resultArray;
 }
-function filterCSGO(listing)
+function filterByGame(listing)
 {
-    return findGameName(listing).innerHTML=="Counter-Strike: Global Offensive";
+    return (findGameName(listing).innerHTML=="Counter-Strike: Global Offensive");
 }
 
 //remove non-recent listings
@@ -261,7 +249,19 @@ function filterByPrice(listing)
 function filterByName(listing)
 {
     var name=listing.querySelector("a.market_listing_item_name_link").innerHTML;
-    var filteredWords=["Sticker"," Case","Gift Package"," Capsule"," Key", " Pass", "Name Tag","Music Kit","ESL ","DreamHack ","Swap Tool"];
+    var filteredWords=["Sticker",
+                       " Case",
+                       "Gift Package",
+                       " Capsule",
+                       " Key", 
+                       " Pass", 
+                       "Name Tag",
+                       "Music Kit",
+                       "ESL ",
+                       "DreamHack ",
+                       "Swap Tool",
+                       "Pallet of Presents"
+                      ];
     if (new RegExp(filteredWords.join("|")).test(name)) {
         return 0;
     }
@@ -303,7 +303,7 @@ function findMinPrice(listing)
 {
     var itemPrice=listing.querySelector("span.market_listing_price_with_fee");
     var price=itemPrice.innerHTML.trim().replace(/[^\d+,.]+[$.]/g,"").replace(",",".");
-    return (price*1.15+0.05).toFixed(2);
+    return (price*1.15+minProfit).toFixed(2);
 
 }
 //find game name
@@ -317,11 +317,11 @@ function compareResults(minPrice, priceList)
 {
     var percentage=0;
     var ranking=0;
-     if (minPrice<=priceList[0] && (priceList[0]-minPrice)/100>=0)
+    if (minPrice<=priceList[0] && (priceList[0]-minPrice)/100>=0)
     {
         percentage=" +"+(((priceList[0]-minPrice)/minPrice)*100).toFixed(1)+"%";
+        autoRefresh=0;
         return  ["VIABLE BUY"+percentage,"green"];
-
     }
     else if (minPrice>=priceList[priceList.length-1])
     {
@@ -354,17 +354,27 @@ function removeCopies(listing)
 
 function clearOutdatedLogs()
 {
- for (var j=0;j<localStorage.length;j++)
- {
-  var entry=localStorage.getItem(localStorage.key(j));
-     var keys=localStorage.key(j);
-     if (keys.indexOf("_time")>0)
-     {
-         if (checkStorageExpire(keys.replace("_time","")))
-             {
-             localStorage.removeItem(keys);
-                 localStorage.removeItem(keys.replace("_time",""));
-             }
-     }
- }
+    for (var j=0;j<localStorage.length;j++)
+    {
+        var entry=localStorage.getItem(localStorage.key(j));
+        var keys=localStorage.key(j);
+        if (keys.indexOf("_time")>0)
+        {
+            if (checkStorageExpire(keys.replace("_time","")))
+            {
+                localStorage.removeItem(keys);
+                localStorage.removeItem(keys.replace("_time",""));
+            }
+        }
+    }
+}
+
+
+
+function buyTransaction()
+{
+    var checkboxSSA=document.getElementsByName("accept_ssa")[0];
+    checkboxSSA.checked=true;
+    var buyButton=document.getElementById("market_buynow_dialog_purchase");
+    eventFire(buyButton,'click');
 }
